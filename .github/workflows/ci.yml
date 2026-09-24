@@ -786,7 +786,7 @@ jobs:
           # a second Vite module graph on the shared runner. The development
           # server supplies the fixture API; production React matches shipped
           # rendering behavior, and the gate asserts that runtime before timing.
-          NODE_ENV=production \
+          NODE_ENV=production VITE_PERF_DOSE=3 \
             bun run --cwd packages/studio dev -- --port 5313 --strictPort &
           SERVER_PID=$!
           DEFAULT_STATUS=0

@@ -1,4 +1,6 @@
 import { useRef, useMemo, useCallback, useState } from "react";
+import { flushSync } from "react-dom";
+const PERF_DOSE = Number(import.meta.env.VITE_PERF_DOSE || 0);
 import { useAdjustedBeatAnalysis, useMusicBeatAnalysis } from "../../hooks/useMusicBeatAnalysis";
 import { usePlayerStore, type TimelineElement } from "../store/playerStore";
 import { defaultTimelineTheme } from "./timelineTheme";
@@ -131,6 +133,7 @@ export function useTimelineProviderState({
     containerRef.current = el;
   }, []);
   const lastScrollLeftRef = useRef(0);
+  const [, forcePerfDose] = useState(0);
   const effectiveDuration = useMemo(
     () => getEffectiveTimelineDuration(duration, timelineElements),
     [duration, timelineElements],
@@ -553,6 +556,7 @@ export function useTimelineProviderState({
         lastScrollLeftRef.current = e.currentTarget.scrollLeft;
         recordTimelineScroll(e.currentTarget);
         syncScrollViewport(e.currentTarget, true);
+        for (let dose = 0; dose < PERF_DOSE; dose += 1) flushSync(() => forcePerfDose((n) => n + 1));
       },
       ...timelineFocus.timelineFocusProps,
       onDragOver: assetDrop.handleAssetDragOver,
